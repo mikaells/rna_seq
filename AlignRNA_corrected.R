@@ -18,7 +18,7 @@ library("Rsubread")
 #####
 
 #get the directory of the raw files
-fastq_directory <- "XXXX/"
+fastq_directory <- "fastqs_subsets//"
 #get the adresses of the files we need
 #remember that all samples have two files
 reads1 <- list.files(path = file.path(fastq_directory), pattern = "*1.fastq$", full.names = TRUE)
@@ -38,7 +38,7 @@ dir.create("indx")
 #Then we build the actual index from the whole genome file
 #and we will put it in the indx/-folder we just made
 buildindex(basename="indx/NC_000913_WG", #the name of our index
-           reference="XXXX", #what file to make it from?
+           reference="NC_000913_WG.fasta", #what file to make it from?
            memory=2000, #max memory is surely enough for a smallish bacterial genome
            gappedIndex = F) #?
 
@@ -76,8 +76,8 @@ dir.create("bam_out")
 
 #then the command for alignment
 alignInfo=align(index = "indx/NC_000913_WG",   #the index
-                readfile1 = "XXXX",            #read pairs 1
-                readfile2 = "XXXX",            #read pairs 2
+                readfile1 = reads1,            #read pairs 1
+                readfile2 = reads2,            #read pairs 2
                 type = "rna",                  #we are doing rna
                 input_format = "FASTQ",        #files are fastq-files, could also be fastq.gz
                 output_format = "BAM",         #output will be BAM files
@@ -95,7 +95,7 @@ alignInfo=align(index = "indx/NC_000913_WG",   #the index
 bam.files <- list.files("bam_out/", pattern = "bam$", full.names = T)
 
 #Run the actual counting.
-fc=featureCounts(files = XXXX,      #the bam-files we are counting 
+fc=featureCounts(files = bam.files,      #the bam-files we are counting 
                  annot.ext = saf,   #the external object we are annotating with
                  isPairedEnd = T)   #and our files are obviously paired
 
@@ -103,4 +103,5 @@ fc=featureCounts(files = XXXX,      #the bam-files we are counting
 stats=fc$stat
 
 features=fc$counts
+
 
